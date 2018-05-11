@@ -31,7 +31,8 @@
 - (void) testBit3View {
     YLCoinView *coinView = [[YLCoinView alloc] initWithFrame:CGRectMake(100, 200, 65, 28)];
     self.coinView = coinView;
-    
+    [self.coinView setCoinStr:@"352"];
+
     [self.view addSubview:coinView];
     
     UIButton *resetBtn3 = [UIButton buttonWithType:UIButtonTypeSystem];
@@ -49,11 +50,11 @@
 
 
 - (void) resetBtn3Tapped: (id) sender {
-    [self.coinView setCoinStr:@"0" duration:5 direction:NO];
+    [self.coinView setCoinStr:@"1,235" duration:1 direction:NO];
 }
 
 - (void) startBtn3Tapped: (id) sender {
-    [self.coinView setCoinStr:@"4,239" duration:5 direction:YES];
+    [self.coinView setCoinStr:@"4,239" duration:1 direction:YES];
 }
 
 

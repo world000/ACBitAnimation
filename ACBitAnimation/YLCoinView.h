@@ -43,6 +43,8 @@
 
 @interface YLCoinView : UIView
 
+- (void) setCoinStr:(NSString *)coinStr;
+
 - (void) setCoinStr:(NSString *)coinStr duration: (NSTimeInterval) duration direction: (BOOL) direction;
 
 @end

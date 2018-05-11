@@ -349,29 +349,29 @@
 }
 
 - (NSArray *) generateCoinListFrom: (NSString *) start to: (NSString *) end withDirection: (BOOL) direction {
-    NSInteger startInt = [start integerValue];
-    NSInteger endInt = [end integerValue];
+    NSInteger startInt = 0;
+    NSInteger endInt = 0;
     NSMutableArray *coinList = [[NSMutableArray alloc] initWithCapacity:10];
-    while (startInt <= endInt) {
+    
+    if (direction) {
+        startInt = [start integerValue];
+        endInt = [end integerValue];
+    }
+    else {
+        startInt = [end integerValue];
+        endInt = [start integerValue];
+    }
+    
+    while (startInt != endInt) {
         [coinList addObject:[@(startInt) stringValue]];
         
-        if (startInt == endInt && coinList.count > 0) {
-            break;
-        }
-        
-        if (direction) {
-            startInt++;
-            if (startInt == 10) {
-                startInt = 0;
-            }
-        }
-        else {
-            startInt--;
-            if (startInt == 0) {
-                startInt = 9;
-            }
+        startInt++;
+        if (startInt == 10) {
+            startInt = 0;
         }
     }
+    
+    [coinList addObject:[@(startInt) stringValue]];
     
     return coinList;
 }
@@ -463,7 +463,7 @@
     _coinView = [[YLCoinInnerView alloc] initWithFrame:self.bounds];
     [self addSubview:_coinView];
     
-    self.backgroundColor = [UIColor redColor];
+//    self.backgroundColor = [UIColor redColor];
 }
 
 - (void) setCoinStr:(NSString *)coinStr {
