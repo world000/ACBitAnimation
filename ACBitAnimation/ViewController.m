@@ -12,8 +12,8 @@
 
 @interface ViewController ()
 
-@property (nonatomic, strong) YLCoinBitView *bitView;
-@property (nonatomic, strong) YLCoinInnerView *bitInnerView;
+//@property (nonatomic, strong) YLCoinBitView *bitView;
+//@property (nonatomic, strong) YLCoinInnerView *bitInnerView;
 @property (nonatomic, strong) YLCoinView *coinView;
 
 @end
@@ -50,78 +50,76 @@
 
 
 - (void) resetBtn3Tapped: (id) sender {
-    [self.coinView setCoinStr:@"1,235" duration:1 direction:NO];
+    [self.coinView setCoinStr:@"200" duration:5];
 }
 
 - (void) startBtn3Tapped: (id) sender {
-    [self.coinView setCoinStr:@"4,239" duration:1 direction:YES];
+    [self.coinView setCoinStr:@"5,500" duration:5];
 }
 
 
-
-
-- (void) testBit2View {
-    YLCoinInnerView *bitInnerView = [[YLCoinInnerView alloc] initWithFrame:CGRectMake(100, 200, 65, 28)];
-    self.bitInnerView = bitInnerView;
-    
-    [self.view addSubview:bitInnerView];
-    
-    UIButton *resetBtn2 = [UIButton buttonWithType:UIButtonTypeSystem];
-    resetBtn2.frame = CGRectMake(200, 200, 100, 50);
-    [resetBtn2 setTitle:@"Reset" forState:UIControlStateNormal];
-    [resetBtn2 addTarget:self action:@selector(resetBtn2Tapped:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:resetBtn2];
-    
-    UIButton *startBtn2 = [UIButton buttonWithType:UIButtonTypeSystem];
-    startBtn2.frame = CGRectMake(200, 300, 100, 50);
-    [startBtn2 setTitle:@"Start" forState:UIControlStateNormal];
-    [startBtn2 addTarget:self action:@selector(startBtn2Tapped:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:startBtn2];
-}
-
-
-- (void) resetBtn2Tapped: (id) sender {
-    [self.bitInnerView setCoinStr:@"0" duration:1 direction:NO];
-}
-
-- (void) startBtn2Tapped: (id) sender {
-    [self.bitInnerView setCoinStr:@"4,239" duration:1 direction:YES];
-}
-
-- (void) testBitView {
-    YLCoinBitView *bitView = [[YLCoinBitView alloc] initWithFrame:CGRectMake(100, 200, 17, 28)];
-    NSString *bitSeqStr = @" ,5";
-    [bitView setCoinList: [bitSeqStr componentsSeparatedByString:@","]];
-    [bitView setCurrentBit:@" "];
-    self.bitView = bitView;
-    
-    [self.view addSubview:bitView];
-    
-    UIButton *resetBtn = [UIButton buttonWithType:UIButtonTypeSystem];
-    resetBtn.frame = CGRectMake(200, 200, 100, 50);
-    [resetBtn setTitle:@"Reset" forState:UIControlStateNormal];
-    [resetBtn addTarget:self action:@selector(resetBtnTapped:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:resetBtn];
-    
-    UIButton *startBtn = [UIButton buttonWithType:UIButtonTypeSystem];
-    startBtn.frame = CGRectMake(200, 300, 100, 50);
-    [startBtn setTitle:@"Start" forState:UIControlStateNormal];
-    [startBtn addTarget:self action:@selector(startBtnTapped:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:startBtn];
-}
-
-- (void) resetBtnTapped: (id) sender {
-    NSString *bitSeqStr = @" ,5";
-    [self.bitView setCoinList: [bitSeqStr componentsSeparatedByString:@","]];
-    [self.bitView setCurrentBit:@" "];
-}
-
-- (void) startBtnTapped: (id) sender {
-    NSString *bitSeqStr = @" ,5";
-    [self.bitView setCoinList: [bitSeqStr componentsSeparatedByString:@","]];
-//    [self.bitView setCurrentBit:@"5"];
-    [self.bitView setCurrentBit:@"5" duration:1];
-}
+//- (void) testBit2View {
+//    YLCoinInnerView *bitInnerView = [[YLCoinInnerView alloc] initWithFrame:CGRectMake(100, 200, 65, 28)];
+//    self.bitInnerView = bitInnerView;
+//
+//    [self.view addSubview:bitInnerView];
+//
+//    UIButton *resetBtn2 = [UIButton buttonWithType:UIButtonTypeSystem];
+//    resetBtn2.frame = CGRectMake(200, 200, 100, 50);
+//    [resetBtn2 setTitle:@"Reset" forState:UIControlStateNormal];
+//    [resetBtn2 addTarget:self action:@selector(resetBtn2Tapped:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:resetBtn2];
+//
+//    UIButton *startBtn2 = [UIButton buttonWithType:UIButtonTypeSystem];
+//    startBtn2.frame = CGRectMake(200, 300, 100, 50);
+//    [startBtn2 setTitle:@"Start" forState:UIControlStateNormal];
+//    [startBtn2 addTarget:self action:@selector(startBtn2Tapped:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:startBtn2];
+//}
+//
+//
+//- (void) resetBtn2Tapped: (id) sender {
+//    [self.bitInnerView setCoinStr:@"0" duration:1 direction:NO];
+//}
+//
+//- (void) startBtn2Tapped: (id) sender {
+//    [self.bitInnerView setCoinStr:@"4,239" duration:1 direction:YES];
+//}
+//
+//- (void) testBitView {
+//    YLCoinBitView *bitView = [[YLCoinBitView alloc] initWithFrame:CGRectMake(100, 200, 17, 28)];
+//    NSString *bitSeqStr = @" ,5";
+//    [bitView setCoinList: [bitSeqStr componentsSeparatedByString:@","]];
+//    [bitView setCurrentBit:@" "];
+//    self.bitView = bitView;
+//
+//    [self.view addSubview:bitView];
+//
+//    UIButton *resetBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+//    resetBtn.frame = CGRectMake(200, 200, 100, 50);
+//    [resetBtn setTitle:@"Reset" forState:UIControlStateNormal];
+//    [resetBtn addTarget:self action:@selector(resetBtnTapped:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:resetBtn];
+//
+//    UIButton *startBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+//    startBtn.frame = CGRectMake(200, 300, 100, 50);
+//    [startBtn setTitle:@"Start" forState:UIControlStateNormal];
+//    [startBtn addTarget:self action:@selector(startBtnTapped:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:startBtn];
+//}
+//
+//- (void) resetBtnTapped: (id) sender {
+//    NSString *bitSeqStr = @" ,5";
+//    [self.bitView setCoinList: [bitSeqStr componentsSeparatedByString:@","]];
+//    [self.bitView setCurrentBit:@" "];
+//}
+//
+//- (void) startBtnTapped: (id) sender {
+//    NSString *bitSeqStr = @" ,5";
+//    [self.bitView setCoinList: [bitSeqStr componentsSeparatedByString:@","]];
+////    [self.bitView setCurrentBit:@"5"];
+//    [self.bitView setCurrentBit:@"5" duration:1];
+//}
 
 - (void) allFonts {
     NSArray *familyNames =[[NSArray alloc] initWithArray:[UIFont familyNames]];
@@ -173,6 +171,5 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
 
 @end

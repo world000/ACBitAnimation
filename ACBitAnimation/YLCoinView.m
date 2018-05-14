@@ -8,6 +8,34 @@
 
 #import "YLCoinView.h"
 
+
+
+
+/* *********************************************
+ *************    YLCoinBitView    *************
+ *********************************************** */
+
+#pragma mark -
+#pragma mark YLCoinBitView
+#pragma mark -
+
+@interface YLCoinBitView : UIView
+
+@property (nonatomic, strong) UILabel *barLabel;
+
+@property (nonatomic, strong) NSArray *coinList;
+@property (nonatomic, strong) UIFont *textFont;
+@property (nonatomic, strong) UIColor *textColor;
+@property (nonatomic, assign) CGFloat lineHeight;
+@property (nonatomic, assign) CGFloat lineSpace;
+@property (nonatomic, assign) CGFloat bitWidth;
+
+@property (nonatomic, copy) NSString *currentBit;
+
+- (void) setCurrentBit:(NSString *)currentBit duration: (NSTimeInterval) duration;
+
+@end
+
 @implementation YLCoinBitView
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
@@ -53,7 +81,7 @@
 }
 
 - (CGFloat) lineSpace {
-    return 5;
+    return 2;
 }
 
 - (CGFloat) bitWidth {
@@ -187,8 +215,6 @@
     }
 }
 
-#pragma mark - private methods
-
 - (NSInteger) indexOfBit:(NSString *) bit {
     NSInteger foundIndex = NSNotFound;
     for (NSInteger index = 0; index < self.coinList.count; index++) {
@@ -212,7 +238,24 @@
 
 
 
+/* *********************************************
+ ************    YLCoinInnerView    ************
+ *********************************************** */
 
+#pragma mark -
+#pragma mark YLCoinInnerView
+#pragma mark -
+
+@interface YLCoinInnerView : UIView
+
+@property (nonatomic, strong) NSArray *bitViews;
+
+@property (nonatomic, copy) NSString *coinStr;
+@property (nonatomic, strong) NSArray *coinBitList;
+
+- (void) setCoinStr:(NSString *)coinStr duration: (NSTimeInterval) duration;
+
+@end
 
 
 @implementation YLCoinInnerView
@@ -246,7 +289,7 @@
     }
     _coinBitList = [coinBitList copy];
     
-    [self updateBitViewsWithDuration:0 direction:NO];
+    [self updateBitViewsWithDuration:0 direction:YES];
 }
 
 - (CGFloat) bitWidth {
@@ -271,7 +314,7 @@
 }
 
 - (void) setupBitViews {
-    const NSInteger maxBitCount = 7; // max seven bits, 999,999
+    const NSInteger maxBitCount = 7; // TODO: max seven bits, 999,999
     NSMutableArray *bitViews = [[NSMutableArray alloc] initWithCapacity:maxBitCount];
     for (NSInteger index = 0; index < maxBitCount; index++) {
         YLCoinBitView *bitView = [[YLCoinBitView alloc] initWithFrame:CGRectZero];
@@ -315,19 +358,19 @@
                     [bitView setCurrentBit:coinBit duration:duration];
                 }
                 else {
-                    if ([bitView.currentBit isEqualToString:@" "]) {
-                        if (direction) {
-                            [bitView setCoinList:@[@" ", coinBit]];
-                        }
-                        else {
-                            [bitView setCoinList:@[coinBit, @" "]];
-                        }
-                        [bitView setCurrentBit:coinBit duration:duration];
-                    }
-                    else {
+//                    if ([bitView.currentBit isEqualToString:@" "]) {
+//                        if (direction) {
+//                            [bitView setCoinList:@[@" ", coinBit]];
+//                        }
+//                        else {
+//                            [bitView setCoinList:@[coinBit, @" "]];
+//                        }
+//                        [bitView setCurrentBit:coinBit duration:duration];
+//                    }
+//                    else {
                         [bitView setCoinList:[self generateCoinListFrom:bitView.currentBit to:coinBit withDirection:direction]];
                         [bitView setCurrentBit:coinBit duration:duration];
-                    }
+//                    }
                 }
             }
         }
@@ -336,12 +379,7 @@
                 ;
             }
             else {
-                if (direction) {
-                    [bitView setCoinList:@[bitView.currentBit, @" "]];
-                }
-                else {
-                    [bitView setCoinList:@[@" ", bitView.currentBit]];
-                }
+                [bitView setCoinList:[self generateCoinListFrom:bitView.currentBit to:@" " withDirection:direction]];
                 [bitView setCurrentBit:@" " duration:duration];
             }
         }
@@ -349,21 +387,22 @@
 }
 
 - (NSArray *) generateCoinListFrom: (NSString *) start to: (NSString *) end withDirection: (BOOL) direction {
+    
     NSInteger startInt = 0;
     NSInteger endInt = 0;
-    NSMutableArray *coinList = [[NSMutableArray alloc] initWithCapacity:10];
-    
+    NSMutableArray *coinList = [[NSMutableArray alloc] initWithCapacity:11];
+
     if (direction) {
-        startInt = [start integerValue];
-        endInt = [end integerValue];
+        startInt = [self valueForBitStr: start];
+        endInt = [self valueForBitStr: end];
     }
     else {
-        startInt = [end integerValue];
-        endInt = [start integerValue];
+        startInt = [self valueForBitStr: end];
+        endInt = [self valueForBitStr: start];
     }
     
     while (startInt != endInt) {
-        [coinList addObject:[@(startInt) stringValue]];
+        [coinList addObject:[self bitStrForValue:startInt]];
         
         startInt++;
         if (startInt == 10) {
@@ -376,11 +415,27 @@
     return coinList;
 }
 
-- (void) setCoinStr:(NSString *)coinStr {
-    [self setCoinStr:coinStr duration:0 direction:NO];
+- (NSInteger) valueForBitStr: (NSString *) bitStr {
+    if ([bitStr isEqualToString:@" "]) {
+        return -1;
+    }
+    
+    return [bitStr integerValue];
 }
 
-- (void) setCoinStr:(NSString *)coinStr duration: (NSTimeInterval) duration direction: (BOOL) direction {
+- (NSString *) bitStrForValue: (NSInteger) bit {
+    if (bit == -1) {
+        return @" ";
+    }
+    
+    return [@(bit) stringValue];
+}
+
+- (void) setCoinStr:(NSString *)coinStr {
+    [self setCoinStr:coinStr duration:0];
+}
+
+- (void) setCoinStr:(NSString *)coinStr duration: (NSTimeInterval) duration {
     if (coinStr.length == 0) {
         coinStr = @"0";
     }
@@ -389,6 +444,9 @@
         return;
     }
     
+    NSInteger coinInt = [[coinStr stringByReplacingOccurrencesOfString:@"," withString:@""] integerValue];
+    NSInteger prevCoinInt = [[_coinStr stringByReplacingOccurrencesOfString:@"," withString:@""] integerValue];
+
     _coinStr = [coinStr copy];
     
     NSMutableArray *coinBitList = [[NSMutableArray alloc] initWithCapacity:_coinStr.length];
@@ -397,7 +455,7 @@
     }
     self.coinBitList = [coinBitList copy];
     
-    [self updateBitViewsWithDuration:duration direction:direction];
+    [self updateBitViewsWithDuration:duration direction:coinInt > prevCoinInt];
 }
 
 - (void) layoutSubviews {
@@ -420,16 +478,22 @@
     }
 }
 
+- (CGSize)sizeThatFits:(CGSize)size {
+    return (CGSizeMake([self viewWidth], size.height));
+}
 
 @end
 
 
 
 
+/* *********************************************
+ ***************    YLCoinView    **************
+ *********************************************** */
 
-
-
-
+#pragma mark -
+#pragma mark YLCoinView
+#pragma mark -
 
 @interface YLCoinView ()
 
@@ -467,11 +531,11 @@
 }
 
 - (void) setCoinStr:(NSString *)coinStr {
-    [self setCoinStr:coinStr duration:0 direction:NO];
+    [self setCoinStr:coinStr duration:0];
 }
 
-- (void) setCoinStr:(NSString *)coinStr duration: (NSTimeInterval) duration direction: (BOOL) direction {
-    [self.coinView setCoinStr:coinStr duration:duration direction: direction];
+- (void) setCoinStr:(NSString *)coinStr duration: (NSTimeInterval) duration {
+    [self.coinView setCoinStr:coinStr duration:duration];
     
     CGRect coinViewRect = self.coinView.frame;
     CGPoint upperRight = CGPointMake(CGRectGetMaxX(coinViewRect), 0);
