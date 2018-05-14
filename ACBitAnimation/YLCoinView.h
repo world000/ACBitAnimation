@@ -8,14 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-
-
-
-
-
-
-
 @interface YLCoinView : UIView
+
+- (NSString *) coinStr;
 
 - (void) setCoinStr:(NSString *)coinStr;
 

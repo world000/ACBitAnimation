@@ -10,11 +10,20 @@
 
 #import "YLCoinView.h"
 
+#import "YLSignProgressView.h"
+
+
+#define RGB(A,B,C) [UIColor colorWithRed:A/255.0 green:B/255.0 blue:C/255.0 alpha:1.0]
+#define RGBA(A,B,C,D) [UIColor colorWithRed:A/255.0 green:B/255.0 blue:C/255.0 alpha:D]
+
+
 @interface ViewController ()
 
 //@property (nonatomic, strong) YLCoinBitView *bitView;
 //@property (nonatomic, strong) YLCoinInnerView *bitInnerView;
 @property (nonatomic, strong) YLCoinView *coinView;
+
+@property (nonatomic, strong) YLSignProgressView *signProgressView;
 
 @end
 
@@ -24,7 +33,41 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    [self testBit3View];
+    [self testSignProgressView];
+    
+//    [self testBit3View];
+    
+//    [self testFont];
+}
+
+
+- (void) testSignProgressView {
+    self.view.backgroundColor = RGB(201, 175, 121);
+
+    YLSignProgressView *signProgressView = [[YLSignProgressView alloc] initWithFrame:CGRectMake(20, 200, 300, 2)];
+    self.signProgressView = signProgressView;
+    
+    [self.view addSubview:signProgressView];
+    
+    UIButton *resetBtn4 = [UIButton buttonWithType:UIButtonTypeSystem];
+    resetBtn4.frame = CGRectMake(200, 240, 100, 50);
+    [resetBtn4 setTitle:@"Reset" forState:UIControlStateNormal];
+    [resetBtn4 addTarget:self action:@selector(resetBtn4Tapped:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:resetBtn4];
+    
+    UIButton *startBtn4 = [UIButton buttonWithType:UIButtonTypeSystem];
+    startBtn4.frame = CGRectMake(200, 320, 100, 50);
+    [startBtn4 setTitle:@"Start" forState:UIControlStateNormal];
+    [startBtn4 addTarget:self action:@selector(startBtn4Tapped:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:startBtn4];
+}
+
+- (void) resetBtn4Tapped: (id) sender {
+    [self.signProgressView set2Stage:1];
+}
+
+- (void) startBtn4Tapped: (id) sender {
+    [self.signProgressView plusStageWithDuration:1];
 }
 
 
@@ -50,11 +93,11 @@
 
 
 - (void) resetBtn3Tapped: (id) sender {
-    [self.coinView setCoinStr:@"200" duration:5];
+    [self.coinView setCoinStr:@"200" duration:3];
 }
 
 - (void) startBtn3Tapped: (id) sender {
-    [self.coinView setCoinStr:@"5,500" duration:5];
+    [self.coinView setCoinStr:@"5,500" duration:3];
 }
 
 
@@ -139,8 +182,9 @@
 }
 
 - (void) testFont {
-//    UIFont *font = [UIFont fontWithName:@"DINAlternate-Bold" size:17]; // DINCondensed-Bold // DINAlternate & DINCondensed
-    UIFont *font = [UIFont systemFontOfSize:17];
+    UIFont *font = [UIFont fontWithName:@"DINAlternate-Bold" size:24]; // DINCondensed-Bold // DINAlternate & DINCondensed
+//    UIFont *font = [UIFont systemFontOfSize:17 weight:UIFontWeightBold]; // DINCondensed-Bold // DINAlternate & DINCondensed
+//    UIFont *font = [UIFont systemFontOfSize:17];
     
     NSLog(@"font = %@", font);
     
@@ -152,19 +196,23 @@
     NSLog(@"lineHeight = %f", font.lineHeight);
     NSLog(@"leading = %f", font.leading);
     
-    NSString *bit = @"8";
-    CGSize bitSize = [bit sizeWithAttributes:@{NSFontAttributeName: font, NSForegroundColorAttributeName: [UIColor blackColor]}];
-    NSLog(@"bitSize = %@", NSStringFromCGSize(bitSize));
     
-    NSMutableParagraphStyle *paraStyle = [[NSMutableParagraphStyle alloc] init];
-    paraStyle.minimumLineHeight = 3;
-    paraStyle.minimumLineHeight = 3;
-    paraStyle.alignment = NSTextAlignmentJustified;
-    paraStyle.lineBreakMode = NSLineBreakByTruncatingTail;
-    
-    NSAttributedString *bitAttr = [[NSAttributedString alloc] initWithString:bit attributes:@{NSFontAttributeName: font, NSForegroundColorAttributeName: [UIColor blackColor]/*, NSParagraphStyleAttributeName: paraStyle*/}];
-    CGSize bitAttriSize = [bitAttr boundingRectWithSize:CGSizeMake(100, 100) options:0 context:nil].size;
-    NSLog(@"bitAttriSize = %@", NSStringFromCGSize(bitAttriSize));
+    NSArray *bitArrays = @[@"0", @"1", @"2", @"3", @"4", @"5", @"6", @"7", @"8", @"9", @",", @" "];
+    for (NSString *bit in bitArrays) {
+//        NSString *bit = @"8";
+        CGSize bitSize = [bit sizeWithAttributes:@{NSFontAttributeName: font, NSForegroundColorAttributeName: [UIColor blackColor]}];
+        NSLog(@"bit = %@, bitSize = %@", bit, NSStringFromCGSize(bitSize));
+        
+        NSMutableParagraphStyle *paraStyle = [[NSMutableParagraphStyle alloc] init];
+        paraStyle.minimumLineHeight = 3;
+        paraStyle.minimumLineHeight = 3;
+        paraStyle.alignment = NSTextAlignmentJustified;
+        paraStyle.lineBreakMode = NSLineBreakByTruncatingTail;
+        
+        NSAttributedString *bitAttr = [[NSAttributedString alloc] initWithString:bit attributes:@{NSFontAttributeName: font, NSForegroundColorAttributeName: [UIColor blackColor]/*, NSParagraphStyleAttributeName: paraStyle*/}];
+        CGSize bitAttriSize = [bitAttr boundingRectWithSize:CGSizeMake(100, 100) options:0 context:nil].size;
+        NSLog(@"bit = %@, bitAttriSize = %@", bit, NSStringFromCGSize(bitAttriSize));
+    }
 }
 
 - (void)didReceiveMemoryWarning {

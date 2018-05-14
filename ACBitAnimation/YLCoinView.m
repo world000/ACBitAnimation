@@ -24,6 +24,7 @@
 @property (nonatomic, strong) UILabel *barLabel;
 
 @property (nonatomic, strong) NSArray *coinList;
+
 @property (nonatomic, strong) UIFont *textFont;
 @property (nonatomic, strong) UIColor *textColor;
 @property (nonatomic, assign) CGFloat lineHeight;
@@ -63,33 +64,34 @@
     _coinList = @[@"0", @"1"];
     _currentBit = @"0";
     
-    _textFont = [UIFont fontWithName:@"DINAlternate-Bold" size:17]; // DINCondensed-Bold // DINAlternate & DINCondensed
-    _textColor = [UIColor blackColor]; // TODO:
+    _textFont = [UIFont fontWithName:@"DINAlternate-Bold" size:24]; // DINCondensed-Bold // DINAlternate & DINCondensed // TODO: font
+    _textColor = [UIColor blackColor]; // TODO: font
 
-    self.backgroundColor = [UIColor clearColor]; // TODO:
-    self.clipsToBounds = YES; // TODO:
+    self.backgroundColor = [UIColor clearColor];
+    self.clipsToBounds = YES;
 
     _barLabel = [[UILabel alloc] initWithFrame:self.bounds];
-    _barLabel.backgroundColor = [UIColor clearColor]; // TODO:
+    _barLabel.backgroundColor = [UIColor clearColor];
     _barLabel.numberOfLines = 0;
     [self addSubview:_barLabel];
+    
     [self updateBarLabel];
 }
 
 - (CGFloat)lineHeight {
-    return ceilf(self.textFont.lineHeight);
+    return ceilf(self.textFont.lineHeight); // TODO: font
 }
 
 - (CGFloat) lineSpace {
-    return 2;
+    return 3; // TODO: font
 }
 
 - (CGFloat) bitWidth {
-    return 15;
+    return 12; // TODO: font
 }
 
 - (CGFloat) bitHeight {
-    return ([self lineHeight] + [self lineSpace]);
+    return ([self lineHeight] + [self lineSpace]); // TODO: font
 }
 
 - (void)setCoinList:(NSArray *)coinList {
@@ -123,8 +125,6 @@
     
     _coinList = coinList;
     
-    [self updateBarLabel];
-    
     // check whether current bit is still in coin list.
     NSInteger foundIndex = [self indexOfBit:self.currentBit];
     
@@ -132,12 +132,11 @@
         _currentBit = self.coinList[0]; // if not found, reset to index 0.
     }
     
-    [self layoutBarLabel];
+    [self updateBarLabel];
 }
 
 - (void) updateBarLabel {
     NSString *coinStr = [self.coinList componentsJoinedByString:@"\n"];
-    
 
     NSMutableParagraphStyle *paraStyle = [[NSMutableParagraphStyle alloc] init];
     paraStyle.minimumLineHeight = self.lineHeight;
@@ -150,13 +149,7 @@
     
     self.barLabel.attributedText = coinAttrStr;
     
-    CGSize coinAttrStrSize = [self.barLabel.attributedText boundingRectWithSize:CGSizeMake([self bitWidth], CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingTruncatesLastVisibleLine context:nil].size;
-    coinAttrStrSize.width = ceilf(coinAttrStrSize.width);
-    coinAttrStrSize.height = ceilf(coinAttrStrSize.height) - (self.coinList.count > 1 ? 0 : [self lineSpace]);
-    
-    CGRect barLabelRect = self.barLabel.frame;
-    barLabelRect.size = coinAttrStrSize;
-    self.barLabel.frame = barLabelRect;
+    [self layoutBarLabel];
 }
 
 - (void) setCurrentBit:(NSString *)currentBit {
@@ -173,6 +166,10 @@
     }
     
     NSInteger foundIndex = [self indexOfBit:currentBit];
+    
+    if (foundIndex == NSNotFound) {
+        return;
+    }
     
     _currentBit = currentBit;
     
@@ -208,11 +205,20 @@
         }
         
         CGRect barLabelRect = self.barLabel.frame;
-        CGPoint barLabelOrigin = CGPointMake((CGRectGetWidth(self.bounds) - barLabelRect.size.width) / 2.0f,
+        barLabelRect.size = [self barLabelContentSize];
+        CGPoint barLabelOrigin = CGPointMake((CGRectGetWidth(self.bounds) - CGRectGetWidth(barLabelRect)) / 2.0f,
                                              (CGRectGetHeight(self.bounds) - [self lineHeight]) / 2.0f);
         barLabelRect.origin = CGPointMake(barLabelOrigin.x, barLabelOrigin.y - foundIndex * [self bitHeight]);
         self.barLabel.frame = barLabelRect;
     }
+}
+
+- (CGSize) barLabelContentSize {
+    CGSize coinAttrStrSize = [self.barLabel.attributedText boundingRectWithSize:CGSizeMake([self bitWidth], CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingTruncatesLastVisibleLine context:nil].size;
+    coinAttrStrSize.width = ceilf(coinAttrStrSize.width);
+    coinAttrStrSize.height = ceilf(coinAttrStrSize.height) - (self.coinList.count > 1 ? 0 : [self lineSpace]);
+
+    return coinAttrStrSize;
 }
 
 - (NSInteger) indexOfBit:(NSString *) bit {
@@ -253,6 +259,7 @@
 @property (nonatomic, copy) NSString *coinStr;
 @property (nonatomic, strong) NSArray *coinBitList;
 
+- (void) setFont: (UIFont *) font;
 - (void) setCoinStr:(NSString *)coinStr duration: (NSTimeInterval) duration;
 
 @end
@@ -282,6 +289,7 @@
 
 - (void) commonSetup {
     [self setupBitViews];
+    
     _coinStr = @"0";
     NSMutableArray *coinBitList = [[NSMutableArray alloc] initWithCapacity:_coinStr.length];
     for (NSInteger index = _coinStr.length - 1; index < _coinStr.length; index--) {
@@ -293,20 +301,20 @@
 }
 
 - (CGFloat) bitWidth {
-    return 10;
+    return 16; // TODO: font
 }
 
 - (CGFloat) thousandSymbolWidth {
-    return 5;
+    return 6; // TODO: font
 }
 
 - (CGFloat) viewWidth {
     CGFloat width = 0;
     CGFloat coinBitCount = self.coinBitList.count;
-    if (coinBitCount >= 5) {
+    if (coinBitCount >= 5) { // thousand symbol
         width = [self bitWidth] * (coinBitCount - 1) + [self thousandSymbolWidth];
     }
-    else {
+    else {  // NO thousand symbol
         width = [self bitWidth] * coinBitCount;
     }
     
@@ -331,7 +339,6 @@
             bitView.currentBit = @" ";
         }
         
-//        bitView.backgroundColor =
         [bitViews addObject:bitView];
     }
     
@@ -342,10 +349,10 @@
     
     for (NSInteger index = 0; index < self.bitViews.count; index++) {
         YLCoinBitView *bitView = self.bitViews[index];
-        if (index < self.coinBitList.count) {
+        if (index < self.coinBitList.count) { // convert to new bit.
             NSString *coinBit = self.coinBitList[index];
             if ([coinBit isEqualToString:bitView.currentBit]) {
-                
+                ;
             }
             else {
                 if ([coinBit isEqualToString:@","]) {
@@ -353,34 +360,34 @@
                         [bitView setCoinList:@[@" ", @","]];
                     }
                     else {
-                        [bitView setCoinList:@[@",", @" "]];
+                        [bitView setCoinList:@[@",", @" "]]; // never happned.
                     }
                     [bitView setCurrentBit:coinBit duration:duration];
                 }
                 else {
-//                    if ([bitView.currentBit isEqualToString:@" "]) {
-//                        if (direction) {
-//                            [bitView setCoinList:@[@" ", coinBit]];
-//                        }
-//                        else {
-//                            [bitView setCoinList:@[coinBit, @" "]];
-//                        }
-//                        [bitView setCurrentBit:coinBit duration:duration];
-//                    }
-//                    else {
-                        [bitView setCoinList:[self generateCoinListFrom:bitView.currentBit to:coinBit withDirection:direction]];
-                        [bitView setCurrentBit:coinBit duration:duration];
-//                    }
+                    [bitView setCoinList:[self generateCoinListFrom:bitView.currentBit to:coinBit withDirection:direction]];
+                    [bitView setCurrentBit:coinBit duration:duration];
                 }
             }
         }
-        else {
+        else { // convert to " "[space]
             if ([bitView.currentBit isEqualToString:@" "]) {
                 ;
             }
             else {
-                [bitView setCoinList:[self generateCoinListFrom:bitView.currentBit to:@" " withDirection:direction]];
-                [bitView setCurrentBit:@" " duration:duration];
+                if ([bitView.currentBit isEqualToString:@","]) {
+                    if (direction) {
+                        [bitView setCoinList:@[@",", @" "]]; // never happened.
+                    }
+                    else {
+                        [bitView setCoinList:@[@" ", @","]];
+                    }
+                    [bitView setCurrentBit:@" " duration:duration];
+                }
+                else {
+                    [bitView setCoinList:[self generateCoinListFrom:bitView.currentBit to:@" " withDirection:direction]];
+                    [bitView setCurrentBit:@" " duration:duration];
+                }
             }
         }
     }
@@ -431,6 +438,10 @@
     return [@(bit) stringValue];
 }
 
+- (void) setFont: (UIFont *) font {
+    // TODO: font
+}
+
 - (void) setCoinStr:(NSString *)coinStr {
     [self setCoinStr:coinStr duration:0];
 }
@@ -453,7 +464,7 @@
     for (NSInteger index = _coinStr.length - 1; index < _coinStr.length; index--) {
         [coinBitList addObject:[_coinStr substringWithRange:NSMakeRange(index, 1)]];
     }
-    self.coinBitList = [coinBitList copy];
+    _coinBitList = [coinBitList copy];
     
     [self updateBitViewsWithDuration:duration direction:coinInt > prevCoinInt];
 }
@@ -465,6 +476,7 @@
         YLCoinBitView *bitView = self.bitViews[index];
         if (index == 0) {
             CGRect bitViewRect = bitView.frame;
+            bitViewRect.size = CGSizeMake([self bitWidth], CGRectGetHeight(self.bounds));
             bitViewRect.origin = CGPointMake(CGRectGetMaxX(self.bounds) - CGRectGetWidth(bitViewRect), 0);
             bitView.frame = bitViewRect;
         }
@@ -472,6 +484,14 @@
             YLCoinBitView *prevBitView = self.bitViews[index - 1];
             CGRect prevBitViewRect = prevBitView.frame;
             CGRect bitViewRect = bitView.frame;
+            
+            if (index == 3) { // thounsand symbol
+                bitViewRect.size = CGSizeMake([self thousandSymbolWidth], CGRectGetHeight(self.bounds));
+            }
+            else {
+                bitViewRect.size = CGSizeMake([self bitWidth], CGRectGetHeight(self.bounds));
+            }
+            
             bitViewRect.origin = CGPointMake(CGRectGetMinX(prevBitViewRect) - CGRectGetWidth(bitViewRect), 0);
             bitView.frame = bitViewRect;
         }
@@ -526,8 +546,14 @@
 - (void) commonSetup {
     _coinView = [[YLCoinInnerView alloc] initWithFrame:self.bounds];
     [self addSubview:_coinView];
-    
-//    self.backgroundColor = [UIColor redColor];
+}
+
+- (void) setFont: (UIFont *) font {
+    [self.coinView setFont: font];
+}
+
+- (NSString *) coinStr {
+    return (self.coinView.coinStr);
 }
 
 - (void) setCoinStr:(NSString *)coinStr {
@@ -535,12 +561,14 @@
 }
 
 - (void) setCoinStr:(NSString *)coinStr duration: (NSTimeInterval) duration {
+    CGRect prevCoinViewRect = self.coinView.frame;
+    CGPoint upperRight = CGPointMake(CGRectGetMaxX(prevCoinViewRect), 0);
+
     [self.coinView setCoinStr:coinStr duration:duration];
+    [self.coinView sizeToFit];
     
     CGRect coinViewRect = self.coinView.frame;
-    CGPoint upperRight = CGPointMake(CGRectGetMaxX(coinViewRect), 0);
-    coinViewRect.size = CGSizeMake([self.coinView viewWidth], CGRectGetHeight(self.bounds));
-    coinViewRect.origin = CGPointMake(upperRight.x - coinViewRect.size.width, 0);
+    coinViewRect.origin = CGPointMake(upperRight.x - CGRectGetWidth(coinViewRect), 0);
     self.coinView.frame = coinViewRect;
     
     if (duration > 0) {
@@ -556,14 +584,8 @@
 - (void) layoutSubviews {
     [super layoutSubviews];
     
-    [self layoutCoinView];
+    [self.coinView sizeToFit];
     self.coinView.center = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
-}
-
-- (void) layoutCoinView {
-    CGRect coinViewRect = self.coinView.frame;
-    coinViewRect.size = CGSizeMake([self.coinView viewWidth], CGRectGetHeight(self.bounds));
-    self.coinView.frame = coinViewRect;
 }
 
 @end
