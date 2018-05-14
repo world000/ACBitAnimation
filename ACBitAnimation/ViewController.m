@@ -63,11 +63,11 @@
 }
 
 - (void) resetBtn4Tapped: (id) sender {
-    [self.signProgressView set2Stage:1 duration:2];
+    [self.signProgressView set2Stage:0 duration:2];
 }
 
 - (void) startBtn4Tapped: (id) sender {
-    [self.signProgressView set2Stage:2 duration:2];
+    [self.signProgressView set2Stage:6 duration:2];
 }
 
 

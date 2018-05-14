@@ -166,30 +166,28 @@ static const NSInteger kYLSignProgressViewStageCount = 7;
         return;
     }
     
+    CGFloat targetProgress = 0;
+    CGFloat segmentProgress = 1.0f / (self.nodeView.count - 1);
+    CGFloat progress = stage * segmentProgress;
+    if (fabs(progress - 1) < 0.01f) {
+        targetProgress = 1;
+    }
+    else {
+        targetProgress = stage * segmentProgress;
+    }
+    
     if (duration > 0) {
-        CGFloat targetProgress = 0;
-        CGFloat segmentProgress = 1.0f / (self.nodeView.count - 1);
-        CGFloat progress = stage * segmentProgress;
-        if (fabs(progress - 1) < 0.01f) {
-            targetProgress = 1;
-        }
-        else {
-            targetProgress = stage * segmentProgress;
-        }
-        
         [self startCountDown2Progress:targetProgress duration:duration];
     }
     else {
         [self stopCountDown];
         
-        CGFloat segmentProgress = 1.0f / (self.nodeView.count - 1);
-        CGFloat progress = stage * segmentProgress;
-        if (fabs(progress - 1) < 0.01f) {
-            self.progress = 1;
+        if (fabs(targetProgress - self.progress) <= FLT_EPSILON) {
+            return;
         }
-        else {
-            self.progress = stage * segmentProgress;
-        }
+        
+        self.progress = targetProgress;
+        
         [self layoutLineView];
         [self updateNodeViewsAlpha];
     }
@@ -197,6 +195,10 @@ static const NSInteger kYLSignProgressViewStageCount = 7;
 
 - (void) startCountDown2Progress: (CGFloat) targetProgress duration: (NSTimeInterval) duration {
     [self stopCountDown];
+    
+    if (fabs(targetProgress - self.progress) <= FLT_EPSILON) {
+        return;
+    }
     
     self.cycleDLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(cycleDisplayLinkFired:)];
     self.cycleTimeStamp = 0;
@@ -214,7 +216,7 @@ static const NSInteger kYLSignProgressViewStageCount = 7;
     }
 }
 
-- (void) cycleDisplayLinkFired: (CADisplayLink *) sender {    
+- (void) cycleDisplayLinkFired: (CADisplayLink *) sender {
     if (self.cycleTimeStamp != 0) {
         CFTimeInterval interval = sender.timestamp - self.cycleTimeStamp;
         if (interval >= 0.01f) {
@@ -223,15 +225,16 @@ static const NSInteger kYLSignProgressViewStageCount = 7;
             if (self.progress > 1) {
                 self.progress = 1;
             }
+            else if (self.progress <= 0) {
+                self.progress = 0;
+            }
+            
             self.cycleTimeStamp = sender.timestamp;
             
-            if (self.progress >= self.targetProgress) {
+            if ((direction > 0 && self.progress >= self.targetProgress)
+                || (direction < 0 && self.progress <= self.targetProgress)) {
                 [self stopCountDown];
                 self.progress = self.targetProgress;
-            }
-            else if (self.progress <= 0) {
-                [self stopCountDown];
-                self.progress = 0;
             }
             
             [self layoutLineView];
@@ -290,12 +293,12 @@ static const NSInteger kYLSignProgressViewStageCount = 7;
 
     for (NSInteger index = 0; index < (self.nodeView.count - 1); index++) {
         YLSignNodeView *nodeView = self.nodeView[index];
-        CGFloat indexPrgoress = index * 1.0f / self.nodeView.count;
-        if (indexPrgoress <= self.progress) {
+        CGFloat indexProgress = index * 1.0f / (self.nodeView.count - 1);
+        if (indexProgress <= self.progress) {
             [nodeView alphaDotView:1];
         }
         else {
-            CGFloat diffProcess = indexPrgoress - self.progress;
+            CGFloat diffProcess = indexProgress - self.progress;
             if (diffProcess < segmentProgress) {
                 [nodeView alphaDotView:(1 - (diffProcess / segmentProgress))];
             }
