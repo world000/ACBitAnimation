@@ -10,7 +10,7 @@
 
 #import "YLCoinView.h"
 
-#import "YLSignProgressView.h"
+#import "YLSignProgressView2.h"
 
 
 #define RGB(A,B,C) [UIColor colorWithRed:A/255.0 green:B/255.0 blue:C/255.0 alpha:1.0]
@@ -63,11 +63,11 @@
 }
 
 - (void) resetBtn4Tapped: (id) sender {
-    [self.signProgressView set2Stage:1];
+    [self.signProgressView set2Stage:1 duration:2];
 }
 
 - (void) startBtn4Tapped: (id) sender {
-    [self.signProgressView plusStageWithDuration:1];
+    [self.signProgressView set2Stage:2 duration:2];
 }
 
 

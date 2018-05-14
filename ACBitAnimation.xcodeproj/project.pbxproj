@@ -15,7 +15,7 @@
 		E727709A20A5D74900815BF4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E727709920A5D74900815BF4 /* main.m */; };
 		E72770A420A5D7D400815BF4 /* money-number.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E72770A120A5D7D400815BF4 /* money-number.ttf */; };
 		E72770A520A5D7D400815BF4 /* YLCoinView.m in Sources */ = {isa = PBXBuildFile; fileRef = E72770A220A5D7D400815BF4 /* YLCoinView.m */; };
-		E7E26C0B20A988BD00637705 /* YLSignProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = E7E26C0A20A988BD00637705 /* YLSignProgressView.m */; };
+		E7E26C0E20A9AD0600637705 /* YLSignProgressView2.m in Sources */ = {isa = PBXBuildFile; fileRef = E7E26C0D20A9AD0600637705 /* YLSignProgressView2.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +34,8 @@
 		E72770A220A5D7D400815BF4 /* YLCoinView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YLCoinView.m; sourceTree = "<group>"; };
 		E7E26C0920A988BD00637705 /* YLSignProgressView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YLSignProgressView.h; sourceTree = "<group>"; };
 		E7E26C0A20A988BD00637705 /* YLSignProgressView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YLSignProgressView.m; sourceTree = "<group>"; };
+		E7E26C0C20A9AD0600637705 /* YLSignProgressView2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YLSignProgressView2.h; sourceTree = "<group>"; };
+		E7E26C0D20A9AD0600637705 /* YLSignProgressView2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YLSignProgressView2.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +76,8 @@
 				E72770A220A5D7D400815BF4 /* YLCoinView.m */,
 				E7E26C0920A988BD00637705 /* YLSignProgressView.h */,
 				E7E26C0A20A988BD00637705 /* YLSignProgressView.m */,
+				E7E26C0C20A9AD0600637705 /* YLSignProgressView2.h */,
+				E7E26C0D20A9AD0600637705 /* YLSignProgressView2.m */,
 				E72770A120A5D7D400815BF4 /* money-number.ttf */,
 				E727709020A5D74700815BF4 /* Main.storyboard */,
 				E727709320A5D74900815BF4 /* Assets.xcassets */,
@@ -156,9 +160,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				E72770A520A5D7D400815BF4 /* YLCoinView.m in Sources */,
+				E7E26C0E20A9AD0600637705 /* YLSignProgressView2.m in Sources */,
 				E727708F20A5D74700815BF4 /* ViewController.m in Sources */,
 				E727709A20A5D74900815BF4 /* main.m in Sources */,
-				E7E26C0B20A988BD00637705 /* YLSignProgressView.m in Sources */,
 				E727708C20A5D74700815BF4 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
