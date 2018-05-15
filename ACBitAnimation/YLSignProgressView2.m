@@ -103,6 +103,10 @@ static const NSInteger kYLSignProgressViewStageCount = 7;
 
 @implementation YLSignProgressView
 
+- (void) dealloc {
+    [self stopProgress];
+}
+
 - (void) commonSetup {
     _progress = 0;
     
@@ -177,10 +181,10 @@ static const NSInteger kYLSignProgressViewStageCount = 7;
     }
     
     if (duration > 0) {
-        [self startCountDown2Progress:targetProgress duration:duration];
+        [self startProgress:targetProgress duration:duration];
     }
     else {
-        [self stopCountDown];
+        [self stopProgress];
         
         if (fabs(targetProgress - self.progress) <= FLT_EPSILON) {
             return;
@@ -193,8 +197,8 @@ static const NSInteger kYLSignProgressViewStageCount = 7;
     }
 }
 
-- (void) startCountDown2Progress: (CGFloat) targetProgress duration: (NSTimeInterval) duration {
-    [self stopCountDown];
+- (void) startProgress: (CGFloat) targetProgress duration: (NSTimeInterval) duration {
+    [self stopProgress];
     
     if (fabs(targetProgress - self.progress) <= FLT_EPSILON) {
         return;
@@ -208,7 +212,7 @@ static const NSInteger kYLSignProgressViewStageCount = 7;
     [_cycleDLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
 }
 
-- (void) stopCountDown {
+- (void) stopProgress {
     if (self.cycleDLink) {
         [self.cycleDLink invalidate];
         self.cycleDLink = nil;
@@ -233,7 +237,7 @@ static const NSInteger kYLSignProgressViewStageCount = 7;
             
             if ((direction > 0 && self.progress >= self.targetProgress)
                 || (direction < 0 && self.progress <= self.targetProgress)) {
-                [self stopCountDown];
+                [self stopProgress];
                 self.progress = self.targetProgress;
             }
             
