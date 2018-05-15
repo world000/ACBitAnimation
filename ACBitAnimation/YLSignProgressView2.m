@@ -87,7 +87,8 @@ static const CGFloat kYLSignNodeViewDotSize = 4;
 
 @property (nonatomic, strong) UIView *lineView;
 
-@property (nonatomic, strong) NSArray *nodeView;
+@property (nonatomic, strong) NSArray *nodeViews;
+@property (nonatomic, strong) NSArray *nodeLabels;
 
 @property (nonatomic, assign) CGFloat progress;
 
@@ -117,6 +118,8 @@ static const NSInteger kYLSignProgressViewStageCount = 7;
     [self addSubview:_lineView];
     
     NSMutableArray *nodeViews = [[NSMutableArray alloc] initWithCapacity:kYLSignProgressViewStageCount];
+    NSMutableArray *nodeLabels = [[NSMutableArray alloc] initWithCapacity:kYLSignProgressViewStageCount];
+    NSArray *nodeLabelTexts = @[@"+50", @"+100", @"+100", @"+100", @"+100", @"+200", @"+500"];
     for (NSInteger index = 0; index < kYLSignProgressViewStageCount; index++) {
         if (index == (kYLSignProgressViewStageCount - 1)) {
             UIImageView *endImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 17, 18)];
@@ -136,9 +139,20 @@ static const NSInteger kYLSignProgressViewStageCount = 7;
             
             [nodeViews addObject:nodeView];
         }
+        
+        UILabel *nodeLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+        [self addSubview:nodeLabel];
+        nodeLabel.font = [UIFont systemFontOfSize:13];
+        nodeLabel.textColor = [UIColor whiteColor];
+        nodeLabel.alpha = 0.6f;
+        nodeLabel.text = nodeLabelTexts[index];
+        [nodeLabel sizeToFit];
+        
+        [nodeLabels addObject:nodeLabel];
     }
     
-    self.nodeView = [nodeViews copy];
+    self.nodeViews = [nodeViews copy];
+    self.nodeLabels = [nodeLabels copy];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -171,7 +185,7 @@ static const NSInteger kYLSignProgressViewStageCount = 7;
     }
     
     CGFloat targetProgress = 0;
-    CGFloat segmentProgress = 1.0f / (self.nodeView.count - 1);
+    CGFloat segmentProgress = 1.0f / (self.nodeViews.count - 1);
     CGFloat progress = stage * segmentProgress;
     if (fabs(progress - 1) < 0.01f) {
         targetProgress = 1;
@@ -253,30 +267,37 @@ static const NSInteger kYLSignProgressViewStageCount = 7;
 - (void) layoutSubviews {
     [super layoutSubviews];
     
-    NSInteger nodeCount = self.nodeView.count;
+    NSInteger nodeCount = self.nodeViews.count;
     
     if (nodeCount == 0) {
         return;
     }
     
     if (nodeCount == 1) {
-        UIView *nodeView = self.nodeView.firstObject;
+        UIView *nodeView = self.nodeViews.firstObject;
         nodeView.center = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
+        
+        UILabel *nodeLabel = self.nodeLabels.firstObject;
+        nodeLabel.center = CGPointMake(nodeView.center.x, nodeView.center.y + 16);
+
         return;
     }
     
     CGFloat nodeWidth = CGRectGetWidth(self.bounds) / (nodeCount - 1);
-    for (NSInteger index = 0; index < self.nodeView.count; index++) {
-        UIView *nodeView = self.nodeView[index];
+    for (NSInteger index = 0; index < self.nodeViews.count; index++) {
+        UIView *nodeView = self.nodeViews[index];
         CGPoint center = CGPointMake(floorf(index * nodeWidth), floorf(CGRectGetMidY(self.bounds)));
         nodeView.center = center;
+        
+        UILabel *nodeLabel = self.nodeLabels[index];
+        nodeLabel.center = CGPointMake(nodeView.center.x, nodeView.center.y + 16);
     }
     
     [self layoutLineView];
 }
 
 - (void) layoutLineView {
-    NSInteger nodeCount = self.nodeView.count;
+    NSInteger nodeCount = self.nodeViews.count;
     
     if (nodeCount == 0) {
         return;
@@ -293,21 +314,31 @@ static const NSInteger kYLSignProgressViewStageCount = 7;
 }
 
 - (void) updateNodeViewsAlpha {
-    CGFloat segmentProgress = 1.0f / (self.nodeView.count - 1);
+    NSInteger nodeCount = self.nodeViews.count;
+    
+    CGFloat segmentProgress = 1.0f / (nodeCount - 1);
 
-    for (NSInteger index = 0; index < (self.nodeView.count - 1); index++) {
-        YLSignNodeView *nodeView = self.nodeView[index];
-        CGFloat indexProgress = index * 1.0f / (self.nodeView.count - 1);
+    for (NSInteger index = 0; index <= (nodeCount - 1); index++) {
+        YLSignNodeView *nodeView = self.nodeViews[index];
+        if (![nodeView isKindOfClass:[YLSignNodeView class]]) {
+            nodeView = nil; // not node view, set to nil and do nothing.
+        }
+        UILabel *nodeLabel = self.nodeLabels[index];
+        
+        CGFloat indexProgress = index * 1.0f / (nodeCount - 1);
         if (indexProgress <= self.progress) {
             [nodeView alphaDotView:1];
+            nodeLabel.alpha = 1;
         }
         else {
             CGFloat diffProcess = indexProgress - self.progress;
             if (diffProcess < segmentProgress) {
                 [nodeView alphaDotView:(1 - (diffProcess / segmentProgress))];
+                nodeLabel.alpha = 0.6f + (1 - (diffProcess / segmentProgress)) * 0.4f;
             }
             else {
                 [nodeView alphaDotView:0];
+                nodeLabel.alpha = 0.6f;
             }
         }
     }
